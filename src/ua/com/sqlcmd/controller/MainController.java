@@ -1,16 +1,21 @@
 package ua.com.sqlcmd.controller;
 
 import ua.com.sqlcmd.model.DatabaseManager;
-import ua.com.sqlcmd.model.JDBCDatabaseManager;
-import ua.com.sqlcmd.view.Console;
 import ua.com.sqlcmd.view.View;
 
 public class MainController {
-    public static void main(String[] args) {
-        View view = new Console();
-        //DatabaseManager manager = new InMemoryDatabaseManager();
-        DatabaseManager manager = new JDBCDatabaseManager();
+    private View view;
+    private DatabaseManager manager;
 
+    public MainController(View view, DatabaseManager manager) {
+        this.view = view;
+        this.manager = manager;
+    }
+
+    public void run(){
+        connectToDb();
+    }
+    private void connectToDb() {
         view.write("Hello user");
         view.write("Input, names of your database, username and password in next format: database|userName|password");
         while (true) {
