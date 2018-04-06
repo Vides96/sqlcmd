@@ -1,7 +1,10 @@
 package ua.com.sqlcmd.controller;
 
+import ua.com.sqlcmd.model.DataSet;
 import ua.com.sqlcmd.model.DatabaseManager;
 import ua.com.sqlcmd.view.View;
+
+import java.util.Arrays;
 
 public class MainController {
     private View view;
@@ -12,9 +15,90 @@ public class MainController {
         this.manager = manager;
     }
 
-    public void run(){
+    public void run() {
         connectToDb();
+        while (true) {
+
+            view.write("insert comand (list or help)");
+            String command = view.read();
+
+            if (command.equalsIgnoreCase("list")) {
+                doList();
+            } else if (command.equalsIgnoreCase("help")) {
+                doHelp();
+            } else if (command.equalsIgnoreCase("exit")) {
+                view.write("See you soon!");
+                System.exit(0);
+            } else if (command.startsWith("find")) {
+                doFind(command);
+            } else {
+                view.write("no exist command: " + command);
+            }
+        }
     }
+
+    private void doFind(String command) {
+        String[] data = command.split("\\|");
+        String tableName = data[1];
+
+        String[] tableColumns = manager.getTableColumns(tableName);
+        printHeader(tableColumns);
+
+        DataSet[] tableData = manager.getTableData(tableName);
+        printTable(tableData);
+
+    }
+
+    private void printTable(DataSet[] tableData) {
+
+        for (DataSet row : tableData) {
+            printRow(row);
+        }
+    }
+
+    private void printRow(DataSet row) {
+        Object[] values = row.getValues();
+        String result = "|";
+        for (Object value : values) {
+            result += value + "|";
+        }
+        view.write(result);
+
+    }
+
+    private void printHeader(String[] tableColumns) {
+    //   String[] names = manager.getTableColumns();
+        String result = "|";
+        for (String name : tableColumns) {
+            result += name + "|";
+        }
+        view.write(result);
+    }
+
+    private void doHelp() {
+        view.write("Command list:");
+        view.write("\tlist");
+        view.write("\t\tlist all tables from database");
+
+        view.write("\tfind|tableName");
+        view.write(("\t\taccess to table datas 'tableName'"));
+
+        view.write("\thelp");
+        view.write("\t\tprint all these to screen");
+
+        view.write("\texit");
+        view.write("\t\tto exit from program");
+
+    }
+
+    private void doList() {
+        String[] tableNames = manager.getTableNames();
+
+        String message = Arrays.toString(tableNames);
+
+        view.write(message);
+    }
+
     private void connectToDb() {
         view.write("Hello user");
         view.write("Input, names of your database, username and password in next format: database|userName|password");
