@@ -72,22 +72,24 @@ public class MainController {
         for (String name : tableColumns) {
             result += name + "|";
         }
+        view.write("----------------------------");
         view.write(result);
+        view.write("----------------------------");
     }
 
     private void doHelp() {
-        view.write("Command list:");
-        view.write("\tlist");
-        view.write("\t\tlist all tables from database");
+            view.write("Command list:");
+            view.write("\tlist");
+            view.write("\t\tlist all tables from database");
 
-        view.write("\tfind|tableName");
-        view.write(("\t\taccess to table datas 'tableName'"));
+            view.write("\tfind|tableName");
+            view.write(("\t\taccess to table datas 'tableName'"));
 
-        view.write("\thelp");
-        view.write("\t\tprint all these to screen");
+            view.write("\thelp");
+            view.write("\t\tprint all these to screen");
 
-        view.write("\texit");
-        view.write("\t\tto exit from program");
+            view.write("\texit");
+            view.write("\t\tto exit from program");
 
     }
 
@@ -117,6 +119,7 @@ public class MainController {
             } catch (Exception e) {
                 printError(e);
             }
+
         }
         view.write("Ok");
     }
