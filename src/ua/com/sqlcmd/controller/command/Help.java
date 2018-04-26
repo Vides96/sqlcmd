@@ -16,7 +16,7 @@ public class Help implements Command {
 
     @Override
     public void process(String command) {
-        view.write("Command list:");
+        view.write("commands:");
         view.write("\tlist");
         view.write("\t\tlist all tables from database");
 

@@ -3,11 +3,10 @@ package ua.com.sqlcmd.controller;
 import ua.com.sqlcmd.controller.command.Command;
 import ua.com.sqlcmd.controller.command.Exit;
 import ua.com.sqlcmd.controller.command.Help;
+import ua.com.sqlcmd.controller.command.List;
 import ua.com.sqlcmd.model.DataSet;
 import ua.com.sqlcmd.model.DatabaseManager;
 import ua.com.sqlcmd.view.View;
-
-import java.util.Arrays;
 
 public class MainController {
     private final Command[] commands;
@@ -18,20 +17,19 @@ public class MainController {
     public MainController(View view, DatabaseManager manager) {
         this.view = view;
         this.manager = manager;
-        this.commands = new Command[]{new Exit(view), new Help(view)};
+        this.commands = new Command[]{new Exit(view), new Help(view), new List(manager, view)};
     }
 
     public void run() {
         connectToDb();
         while (true) {
 
-            view.write("insert comand (list or help)");
+            view.write("insert comand (or 'help' to help)");
             String command = view.read();
 
-            if (command.equalsIgnoreCase("list")) {
-                doList();
+            if (commands[2].canProcess(command)) {
+                commands[2].process(command);
             } else if (commands[1].canProcess(command)) {
-
                 commands[1].process(command);
             } else if (commands[0].canProcess(command)) {
                 commands[0].process(command);
@@ -82,14 +80,6 @@ public class MainController {
         view.write("----------------------------");
         view.write(result);
         view.write("----------------------------");
-    }
-
-    private void doList() {
-        String[] tableNames = manager.getTableNames();
-
-        String message = Arrays.toString(tableNames);
-
-        view.write(message);
     }
 
     private void connectToDb() {
