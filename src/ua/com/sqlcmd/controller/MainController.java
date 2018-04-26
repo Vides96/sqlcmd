@@ -1,10 +1,6 @@
 package ua.com.sqlcmd.controller;
 
-import ua.com.sqlcmd.controller.command.Command;
-import ua.com.sqlcmd.controller.command.Exit;
-import ua.com.sqlcmd.controller.command.Help;
-import ua.com.sqlcmd.controller.command.List;
-import ua.com.sqlcmd.model.DataSet;
+import ua.com.sqlcmd.controller.command.*;
 import ua.com.sqlcmd.model.DatabaseManager;
 import ua.com.sqlcmd.view.View;
 
@@ -17,7 +13,8 @@ public class MainController {
     public MainController(View view, DatabaseManager manager) {
         this.view = view;
         this.manager = manager;
-        this.commands = new Command[]{new Exit(view), new Help(view), new List(manager, view)};
+        this.commands = new Command[]{new Exit(view), new Help(view),
+                new List(manager, view), new Find(manager, view)};
     }
 
     public void run() {
@@ -34,53 +31,17 @@ public class MainController {
             } else if (commands[0].canProcess(command)) {
                 commands[0].process(command);
                 System.exit(0);
-            } else if (command.startsWith("find")) {
-                doFind(command);
-            } else {
+            } else if (commands[3].canProcess(command)) {
+                commands[3].process(command);
+            }else {
                 view.write("no exist command: " + command);
             }
         }
     }
 
-    private void doFind(String command) {
-        String[] data = command.split("\\|");
-        String tableName = data[1];
 
-        String[] tableColumns = manager.getTableColumns(tableName);
-        printHeader(tableColumns);
 
-        DataSet[] tableData = manager.getTableData(tableName);
-        printTable(tableData);
 
-    }
-
-    private void printTable(DataSet[] tableData) {
-
-        for (DataSet row : tableData) {
-            printRow(row);
-        }
-    }
-
-    private void printRow(DataSet row) {
-        Object[] values = row.getValues();
-        String result = "|";
-        for (Object value : values) {
-            result += value + "|";
-        }
-        view.write(result);
-
-    }
-
-    private void printHeader(String[] tableColumns) {
-        //   String[] names = manager.getTableColumns();
-        String result = "|";
-        for (String name : tableColumns) {
-            result += name + "|";
-        }
-        view.write("----------------------------");
-        view.write(result);
-        view.write("----------------------------");
-    }
 
     private void connectToDb() {
         view.write("Hello user");
