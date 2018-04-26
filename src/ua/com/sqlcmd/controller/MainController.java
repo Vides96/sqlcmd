@@ -13,8 +13,11 @@ public class MainController {
     public MainController(View view, DatabaseManager manager) {
         this.view = view;
         this.manager = manager;
-        this.commands = new Command[]{new Exit(view), new Help(view),
-                new List(manager, view), new Find(manager, view)};
+        this.commands = new Command[]{new Exit(view),
+                new Help(view),
+                new List(manager, view),
+                new Find(manager, view),
+                new Unsupported(view)};
     }
 
     public void run() {
@@ -22,19 +25,12 @@ public class MainController {
         while (true) {
 
             view.write("insert comand (or 'help' to help)");
-            String command = view.read();
-
-            if (commands[2].canProcess(command)) {
-                commands[2].process(command);
-            } else if (commands[1].canProcess(command)) {
-                commands[1].process(command);
-            } else if (commands[0].canProcess(command)) {
-                commands[0].process(command);
-                System.exit(0);
-            } else if (commands[3].canProcess(command)) {
-                commands[3].process(command);
-            }else {
-                view.write("no exist command: " + command);
+            String input = view.read();
+            for (Command command : commands) {
+                if (command.canProcess(input)) {
+                    command.process(input);
+                    break;
+                }
             }
         }
     }
@@ -68,7 +64,8 @@ public class MainController {
 
     private void printError(Exception e) {
         String message = e.getMessage();
-        if (e.getCause() != null) {
+        Throwable cause = e.getCause();
+        if (cause != null) {
             message += " " + e.getCause().getMessage();
         }
         view.write("Fault, maybe " + message);
