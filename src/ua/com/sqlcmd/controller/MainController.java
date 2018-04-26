@@ -2,6 +2,7 @@ package ua.com.sqlcmd.controller;
 
 import ua.com.sqlcmd.controller.command.Command;
 import ua.com.sqlcmd.controller.command.Exit;
+import ua.com.sqlcmd.controller.command.Help;
 import ua.com.sqlcmd.model.DataSet;
 import ua.com.sqlcmd.model.DatabaseManager;
 import ua.com.sqlcmd.view.View;
@@ -12,12 +13,12 @@ public class MainController {
     private final Command[] commands;
     private View view;
     private DatabaseManager manager;
-    
+
 
     public MainController(View view, DatabaseManager manager) {
         this.view = view;
         this.manager = manager;
-        this.commands = new Command[]{new Exit(view)};
+        this.commands = new Command[]{new Exit(view), new Help(view)};
     }
 
     public void run() {
@@ -29,8 +30,9 @@ public class MainController {
 
             if (command.equalsIgnoreCase("list")) {
                 doList();
-            } else if (command.equalsIgnoreCase("help")) {
-                doHelp();
+            } else if (commands[1].canProcess(command)) {
+
+                commands[1].process(command);
             } else if (commands[0].canProcess(command)) {
                 commands[0].process(command);
                 System.exit(0);
@@ -72,7 +74,7 @@ public class MainController {
     }
 
     private void printHeader(String[] tableColumns) {
-    //   String[] names = manager.getTableColumns();
+        //   String[] names = manager.getTableColumns();
         String result = "|";
         for (String name : tableColumns) {
             result += name + "|";
@@ -80,22 +82,6 @@ public class MainController {
         view.write("----------------------------");
         view.write(result);
         view.write("----------------------------");
-    }
-
-    private void doHelp() {
-            view.write("Command list:");
-            view.write("\tlist");
-            view.write("\t\tlist all tables from database");
-
-            view.write("\tfind|tableName");
-            view.write(("\t\taccess to table datas 'tableName'"));
-
-            view.write("\thelp");
-            view.write("\t\tprint all these to screen");
-
-            view.write("\texit");
-            view.write("\t\tto exit from program");
-
     }
 
     private void doList() {
