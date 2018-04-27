@@ -4,6 +4,8 @@ import ua.com.sqlcmd.model.DatabaseManager;
 import ua.com.sqlcmd.view.View;
 
 public class Connect implements Command {
+    private static String COMMAND_SAMPLE = "connect|sqlcmd|postgres|tiopampa2017";
+
     private DatabaseManager manager;
     private View view;
 
@@ -23,8 +25,9 @@ public class Connect implements Command {
         try {
             String[] data = command.split("\\|");
 
-            if (data.length != 4) {//TODO - magic number
-                throw new IllegalArgumentException("number of parameters  don't match divided with, '|', must be 4 but we have: " + data.length);
+            if (data.length != count()) {
+                throw new IllegalArgumentException(String.format("number of parameters  don't match divided with, '|', " +
+                        "must be %s but we have: %s ", count(), data.length));
             }
             String databaseName = data[1];
             String userName = data[2];
@@ -34,6 +37,10 @@ public class Connect implements Command {
         } catch (Exception e) {
             printError(e);
         }
+    }
+
+    public int count() {
+        return COMMAND_SAMPLE.split("\\|").length;
     }
 
 

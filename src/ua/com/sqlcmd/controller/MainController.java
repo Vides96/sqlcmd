@@ -25,14 +25,18 @@ public class MainController {
     public void run() {
         view.write("Hello user");
         view.write("Input name of your database, username and password in next format: connect|database|userName|password");
+
         while (true) {
             String input = view.read();
-            for (Command command : commands) {
-                if (command.canProcess(input)) {
-                    command.process(input);
-                    break;
-                }
+            if (input == null) {
+                new Exit(view).process(input);
             }
+                for (Command command : commands) {
+                    if (command.canProcess(input)) {
+                        command.process(input);
+                        break;
+                    }
+                }
             view.write("insert command (or 'help' to help)");
         }
     }
