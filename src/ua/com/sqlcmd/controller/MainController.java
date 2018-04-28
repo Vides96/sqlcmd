@@ -23,6 +23,14 @@ public class MainController {
     }
 
     public void run() {
+        try {
+            doWork();
+        } catch (ExitException e) {
+            //Do nothing
+        }
+    }
+
+    private void doWork() {
         view.write("Hello user");
         view.write("Input name of your database, username and password in next format: connect|database|userName|password");
 
@@ -31,15 +39,13 @@ public class MainController {
             if (input == null) {
                 new Exit(view).process(input);
             }
-                for (Command command : commands) {
-                    if (command.canProcess(input)) {
-                        command.process(input);
-                        break;
-                    }
+            for (Command command : commands) {
+                if (command.canProcess(input)) {
+                    command.process(input);
+                    break;
                 }
+            }
             view.write("insert command (or 'help' to help)");
         }
     }
-
-
 }

@@ -19,7 +19,7 @@ public class IsConnected implements Command {
 
     @Override
     public void process(String command) {
-        view.write(String.format("You can not use command %s while you mismatch: " +
+        view.write(String.format("You can not use command '%s' while you mismatch: " +
                 "connect|databaseName|password", command));
     }
 }
