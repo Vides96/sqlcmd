@@ -23,6 +23,12 @@ public class Help implements Command {
         view.write("\tlist");
         view.write("\t\tlist all tables from database");
 
+        view.write("\tclear|tableName");
+        view.write("\t\tclear all table");//TODO, can a user to ask again before clear a table
+
+        view.write("\tcreate|tableNmae|column1|value1|column2|value2|column3|value3");
+        view.write("\t\tto create a DB entry");
+
         view.write("\tfind|tableName");
         view.write(("\t\taccess to table datas 'tableName'"));
 

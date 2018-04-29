@@ -3,6 +3,8 @@ package ua.com.sqlcmd.integration;
 import org.junit.Before;
 import org.junit.Test;
 import ua.com.sqlcmd.controller.Main;
+import ua.com.sqlcmd.model.DatabaseManager;
+import ua.com.sqlcmd.model.JDBCDatabaseManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -13,9 +15,11 @@ import static org.junit.Assert.assertEquals;
 public class IntegrationTest {
     private ConfigurableInputStream in;
     private ByteArrayOutputStream out;
+    private DatabaseManager databaseManager;
 
     @Before
     public  void setup() {
+        databaseManager = new JDBCDatabaseManager();
         in = new ConfigurableInputStream();
         out = new ByteArrayOutputStream();
 
@@ -50,6 +54,10 @@ public class IntegrationTest {
                 "\t\tto connect to DB, with which we will work\r\n" +
                 "\tlist\r\n" +
                 "\t\tlist all tables from database\r\n" +
+                "\tclear|tableName\r\n" +
+                "\t\tclear all table\r\n" +
+                "\tcreate|tableNmae|column1|value1|column2|value2|column3|value3\r\n" +
+                "\t\tto create a DB entry\r\n"+
                 "\tfind|tableName\r\n" +
                 "\t\taccess to table datas 'tableName'\r\n" +
                 "\thelp\r\n" +
@@ -229,6 +237,9 @@ public class IntegrationTest {
                 "----------------------------\r\n" +
                 "|id|name|password|\r\n" +
                 "----------------------------\r\n" +
+                "|13|Stiven|*****|\r\n" +
+                "|14|Eva|+++++|\r\n" +
+                "----------------------------\r\n"+
                 "insert command (or 'help' to help)\r\n" +
                 //exit
                 "See you soon!\r\n", getData());
@@ -264,6 +275,138 @@ public class IntegrationTest {
                 "insert command (or 'help' to help)\r\n" +
                 //exit
                 "See you soon!\r\n", getData());
+
+    }
+
+    @Test
+    public void testConnectWithError() {
+        //given
+        in.add("connect|sqlcmd|");
+        in.add("exit");
+
+        //when
+        Main.main(new String[0]);
+
+        //then
+        assertEquals("Hello user\r\n" +
+                "Input name of your database, username and password in next format: connect|database|userName|password\r\n" +
+                //connect sqlcmd with error
+                "Fault, maybe number of parameters  don't match divided with, '|', must be 4 but we have: 2 \r\n" +
+                "Enter again your datas\r\n"+
+                "insert command (or 'help' to help)\r\n" +
+                //exit
+                "See you soon!\r\n", getData());
+
+    }
+
+    @Test
+    public void testFindAfterConnectWithData() {
+        //given
+//        databaseManager.connect("sqlcmd", "postgres", "tiopampa2017");
+//
+//        databaseManager.clear("user");
+//
+//        DataSet user1 = new DataSet();
+//        user1.put("id", 13);
+//        user1.put("name", "Stiven");
+//        user1.put("password", "*****");
+//
+//        DataSet user2 = new DataSet();
+//        user2.put("id", 14);
+//        user2.put("name", "Eva");
+//        user2.put("password", "+++++");
+//
+//        databaseManager.create("user", user1);
+//        databaseManager.create("user", user2);
+
+
+        in.add("connect|sqlcmd|postgres|tiopampa2017");
+        in.add("clear|user");
+        in.add("create|user|id|13|name|Stiven|password|*****");
+        in.add("create|user|id|14|name|Eva|password|+++++");
+        in.add("find|user");
+        in.add("exit");
+
+        //when
+        Main.main(new String[0]);
+
+        //then
+        assertEquals("Hello user\r\n" +
+                "Input name of your database, username and password in next format: connect|database|userName|password\r\n" +
+                //connect
+                "Ok\r\n" +
+                "insert command (or 'help' to help)\r\n"+
+                //clear|user
+                "Table was cleared successful\r\n" +
+                "insert command (or 'help' to help)\r\n"+
+                //create|user|id|13|name|Stiven|password|*****
+                "DB entry  {names=[id, name, password], values=[13, Stiven, *****]} was created succsefully in table 'user' \r\n" +
+                "insert command (or 'help' to help)\r\n"+
+                //create|user|id|14|name|Eva|password|+++++
+                "DB entry  {names=[id, name, password], values=[14, Eva, +++++]} was created succsefully in table 'user' \r\n"+
+                "insert command (or 'help' to help)\r\n"+
+                //find|user
+                "----------------------------\r\n" +
+                "|id|name|password|\r\n" +
+                "----------------------------\r\n" +
+                "|13|Stiven|*****|\r\n"+
+                "|14|Eva|+++++|\r\n"+
+                "----------------------------\r\n" +
+                "insert command (or 'help' to help)\r\n"+
+                //exit
+                "See you soon!\r\n", getData());
+
+
+    }
+
+    @Test
+    public void testClearWithError() {
+        //given
+        in.add("connect|sqlcmd|postgres|tiopampa2017");
+        in.add("clear");
+        in.add("exit");
+
+        //when
+        Main.main(new String[0]);
+
+        //then
+        assertEquals("Hello user\r\n" +
+                "Input name of your database, username and password in next format: connect|database|userName|password\r\n" +
+                //connect
+                "Ok\r\n" +
+                "insert command (or 'help' to help)\r\n"+
+                //clear|user
+                "no exist command: clear\r\n"+
+                "insert command (or 'help' to help)\r\n"+
+                //exit
+                "See you soon!\r\n", getData());
+
+
+    }
+
+    @Test
+    public void testCreateWithErrors() {
+        //given
+        in.add("connect|sqlcmd|postgres|tiopampa2017");
+        in.add("create|user|error");
+        in.add("exit");
+
+        //when
+        Main.main(new String[0]);
+
+        //then
+        assertEquals("Hello user\r\n" +
+                "Input name of your database, username and password in next format: connect|database|userName|password\r\n" +
+                //connect
+                "Ok\r\n" +
+                "insert command (or 'help' to help)\r\n"+
+                //create|user|error
+                "Fault, maybe Must be an even number of parameters in format'create|tableNmae|column1|value1|column2|value2|column3|value3', but there is: 'create|user|error'\r\n"+
+                "Enter again your datas\r\n" +
+                "insert command (or 'help' to help)\r\n"+
+                //exit
+                "See you soon!\r\n", getData());
+
 
     }
 

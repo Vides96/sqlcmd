@@ -17,6 +17,8 @@ public class MainController {
                 new Help(view),
                 new IsConnected(manager, view),
                 new List(manager, view),
+                new Clear(manager, view),
+                new Create(manager, view),
                 new Find(manager, view),
                 new Unsupported(view)
         };
@@ -36,16 +38,32 @@ public class MainController {
 
         while (true) {
             String input = view.read();
-            if (input == null) {
-                new Exit(view).process(input);
-            }
+
             for (Command command : commands) {
-                if (command.canProcess(input)) {
-                    command.process(input);
+                try {
+                    if (command.canProcess(input)) {
+                        command.process(input);
+                        break;
+                    }
+                } catch (Exception e) {
+                    if (e instanceof ExitException) {
+                           throw e;
+                    }
+                    printError(e);
                     break;
                 }
             }
             view.write("insert command (or 'help' to help)");
         }
+    }
+
+    private void printError(Exception e) {
+        String message = e.getMessage();
+        Throwable cause = e.getCause();
+        if (cause != null) {
+            message += " " + e.getCause().getMessage();
+        }
+        view.write("Fault, maybe " + message);
+        view.write("Enter again your datas");
     }
 }

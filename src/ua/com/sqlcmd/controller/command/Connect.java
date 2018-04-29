@@ -22,7 +22,7 @@ public class Connect implements Command {
     @Override
     public void process(String command) {
 
-        try {
+
             String[] data = command.split("\\|");
 
             if (data.length != count()) {
@@ -34,9 +34,7 @@ public class Connect implements Command {
             String password = data[3];
             manager.connect(databaseName, userName, password);
             view.write("Ok");
-        } catch (Exception e) {
-            printError(e);
-        }
+
     }
 
     public int count() {
@@ -44,13 +42,5 @@ public class Connect implements Command {
     }
 
 
-    private void printError(Exception e) {
-        String message = e.getMessage();
-        Throwable cause = e.getCause();
-        if (cause != null) {
-            message += " " + e.getCause().getMessage();
-        }
-        view.write("Fault, maybe " + message);
-        view.write("Enter again your datas");
-    }
+
 }
