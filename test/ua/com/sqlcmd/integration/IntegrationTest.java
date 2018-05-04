@@ -18,10 +18,10 @@ public class IntegrationTest {
     private DatabaseManager databaseManager;
 
     @Before
-    public  void setup() {
+    public void setup() {
         databaseManager = new JDBCDatabaseManager();
-        in = new ConfigurableInputStream();
         out = new ByteArrayOutputStream();
+        in = new ConfigurableInputStream();
 
         System.setIn(in);
         System.setOut(new PrintStream(out));
@@ -83,6 +83,17 @@ public class IntegrationTest {
                 //exit
                 "See you soon!\r\n", getData());
 
+    }
+
+    public String getData() {
+        try {
+            String result = new String(out.toByteArray(), "UTF-8");
+            out.reset();
+            return result;
+
+        } catch (UnsupportedEncodingException e) {
+            return e.getMessage();
+        }
     }
 
     @Test
@@ -237,8 +248,8 @@ public class IntegrationTest {
                 "----------------------------\r\n" +
                 "|id|name|password|\r\n" +
                 "----------------------------\r\n" +
-                "|13|Stiven|*****|\r\n" +
-                "|14|Eva|+++++|\r\n" +
+               // "|13|Stiven|*****|\r\n" +
+               // "|14|Eva|+++++|\r\n" +
                 "----------------------------\r\n"+
                 "insert command (or 'help' to help)\r\n" +
                 //exit
@@ -363,7 +374,7 @@ public class IntegrationTest {
     public void testClearWithError() {
         //given
         in.add("connect|sqlcmd|postgres|tiopampa2017");
-        in.add("clear");
+        in.add("clear|fsd|dfdf");
         in.add("exit");
 
         //when
@@ -376,7 +387,8 @@ public class IntegrationTest {
                 "Ok\r\n" +
                 "insert command (or 'help' to help)\r\n"+
                 //clear|user
-                "no exist command: clear\r\n"+
+                "Fault, maybe command format 'clear|tableName', but you input: clear|fsd|dfdf\r\n" +
+                "Enter again your datas\r\n"+
                 "insert command (or 'help' to help)\r\n"+
                 //exit
                 "See you soon!\r\n", getData());
@@ -410,16 +422,7 @@ public class IntegrationTest {
 
     }
 
-    private String getData() {
-        try {
-            String result = new String(out.toByteArray(), "UTF-8");
-            out.reset();
-            return result;
 
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+
 
 }

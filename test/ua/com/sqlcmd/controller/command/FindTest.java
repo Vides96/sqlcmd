@@ -48,14 +48,18 @@ public class FindTest {
         command.process("find|user");
 
         //then
+        shouldPrint("[----------------------------, " +
+                "|id|name|password|, " +
+                "----------------------------, " +
+                "|12|Stiven|*****|, " +
+                "|13|Eva|+++++|, " +
+                "----------------------------]");
+    }
+
+    private void shouldPrint(String expected) {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(view, Mockito.atLeastOnce()).write(captor.capture());
-        assertEquals("[----------------------------, " +
-                        "|id|name|password|, " +
-                        "----------------------------, " +
-                        "|12|Stiven|*****|, |13|Eva|+++++|, " +
-                        "----------------------------]",
-                captor.getAllValues().toString());
+        assertEquals(expected,captor.getAllValues().toString());
     }
 
     @Test
@@ -104,13 +108,10 @@ public class FindTest {
         command.process("find|user");
 
         //then
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(view, Mockito.atLeastOnce()).write(captor.capture());
-        assertEquals("[----------------------------, " +
+        shouldPrint("[----------------------------, " +
                         "|id|name|password|, " +
                         "----------------------------, " +
                         // "|12|Stiven|*****|, |13|Eva|+++++|, " +
-                        "----------------------------]",
-                captor.getAllValues().toString());
+                        "----------------------------]");
     }
 }

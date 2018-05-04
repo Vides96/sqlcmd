@@ -5,8 +5,8 @@ import ua.com.sqlcmd.model.DatabaseManager;
 import ua.com.sqlcmd.view.View;
 
 public class Find implements Command {
-    private final DatabaseManager manager;
-    private final View view;
+    private  DatabaseManager manager;
+    private  View view;
 
     public Find(DatabaseManager manager, View view) {
         this.manager = manager;
