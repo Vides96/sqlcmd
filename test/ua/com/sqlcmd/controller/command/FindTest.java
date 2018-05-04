@@ -41,6 +41,7 @@ public class FindTest {
         Mockito.when(databaseManager.getTableData("user"))
                 .thenReturn(data);
 
+
         //when
         command.process("find|user");
 
