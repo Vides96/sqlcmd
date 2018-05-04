@@ -25,6 +25,7 @@ public class Clear implements Command {
             throw new IllegalArgumentException("command format 'clear|tableName', but you input: " + command);
         }
         manager.clear(data[1]);
-        view.write(String.format("Table was cleared successful", data[1]));
+       // view.write(String.format("Table was cleared successful", data[1]));
+        view.write(String.format("Table %s was cleared successful", data[1]));
     }
 }

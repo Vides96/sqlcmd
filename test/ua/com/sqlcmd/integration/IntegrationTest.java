@@ -348,7 +348,7 @@ public class IntegrationTest {
                 "Ok\r\n" +
                 "insert command (or 'help' to help)\r\n"+
                 //clear|user
-                "Table was cleared successful\r\n" +
+                "Table user was cleared successful\r\n" +
                 "insert command (or 'help' to help)\r\n"+
                 //create|user|id|13|name|Stiven|password|*****
                 "DB entry  {names=[id, name, password], values=[13, Stiven, *****]} was created succsefully in table 'user' \r\n" +
