@@ -9,7 +9,9 @@ import ua.com.sqlcmd.model.DataSet;
 import ua.com.sqlcmd.model.DatabaseManager;
 import ua.com.sqlcmd.view.View;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class FindTest {
     private DatabaseManager databaseManager;
@@ -49,10 +51,67 @@ public class FindTest {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(view, Mockito.atLeastOnce()).write(captor.capture());
         assertEquals("[----------------------------, " +
-                            "|id|name|password|, " +
-                            "----------------------------, " +
-                            "|12|Stiven|*****|, |13|Eva|+++++|, " +
-                            "----------------------------]",
+                        "|id|name|password|, " +
+                        "----------------------------, " +
+                        "|12|Stiven|*****|, |13|Eva|+++++|, " +
+                        "----------------------------]",
+                captor.getAllValues().toString());
+    }
+
+    @Test
+    public void testCanProcessFindWithParametersString() {
+        //given
+        Command command = new Find(databaseManager, view);
+        //when
+        boolean canProcess = command.canProcess("find|user");
+        //then
+        assertTrue(canProcess);
+    }
+
+    @Test
+    public void testCanProcessFindWithoutParametersString() {
+        //given
+        Command command = new Find(databaseManager, view);
+        //when
+        boolean canProcess = command.canProcess("find");
+        //then
+        assertFalse(canProcess);
+    }
+
+    @Test
+    public void testCanProcessFindWithtParametersQweString() {
+        //given
+        Command command = new Find(databaseManager, view);
+        //when
+        boolean canProcess = command.canProcess("qwe|user");
+        //then
+        assertFalse(canProcess);
+    }
+
+    @Test
+    public void testPrintEmptyTableData() {
+        //given
+        Command command = new Find(databaseManager, view);
+
+        Mockito.when(databaseManager.getTableColumns("user"))
+                .thenReturn(new String[]{"id", "name", "password"});
+
+        DataSet[] data = new DataSet[0];
+        Mockito.when(databaseManager.getTableData("user"))
+                .thenReturn(data);
+
+
+        //when
+        command.process("find|user");
+
+        //then
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        Mockito.verify(view, Mockito.atLeastOnce()).write(captor.capture());
+        assertEquals("[----------------------------, " +
+                        "|id|name|password|, " +
+                        "----------------------------, " +
+                        // "|12|Stiven|*****|, |13|Eva|+++++|, " +
+                        "----------------------------]",
                 captor.getAllValues().toString());
     }
 }
