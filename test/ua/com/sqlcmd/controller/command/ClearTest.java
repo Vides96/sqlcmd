@@ -7,7 +7,9 @@ import ua.com.sqlcmd.model.DatabaseManager;
 import ua.com.sqlcmd.view.View;
 
 import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 //import static org.mockito.Mockito.*;
 
@@ -67,5 +69,31 @@ public class ClearTest {
         assertFalse(canProcess);
     }
 
+    @Test
+    public void testValidationErrorWhenCountParametersLessThan2() {
+        //given
 
+        //when
+        try {
+            command.process("clear");
+            fail();
+        } catch (IllegalArgumentException e) {
+            //then
+            assertEquals("command format 'clear|tableName', but you input: clear", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testValidationErrorWhenCountParametersMoreThan2() {
+        //given
+
+        //when
+        try {
+            command.process("clear|table|qwe");
+            fail();
+        } catch (IllegalArgumentException e) {
+            //then
+            assertEquals("command format 'clear|tableName', but you input: clear|table|qwe", e.getMessage());
+        }
+    }
 }
