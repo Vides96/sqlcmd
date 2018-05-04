@@ -16,18 +16,18 @@ import static org.junit.Assert.assertTrue;
 public class FindTest {
     private DatabaseManager databaseManager;
     private View view;
+    private Command command;
 
     @Before
     public void setup() {
         databaseManager = Mockito.mock(DatabaseManager.class);
         view = Mockito.mock(View.class);
+        command = new Find(databaseManager, view);
     }
 
     @Test
     public void testPrintTableData() {
         //given
-        Command command = new Find(databaseManager, view);
-
         Mockito.when(databaseManager.getTableColumns("user"))
                 .thenReturn(new String[]{"id", "name", "password"});
 
@@ -61,7 +61,7 @@ public class FindTest {
     @Test
     public void testCanProcessFindWithParametersString() {
         //given
-        Command command = new Find(databaseManager, view);
+
         //when
         boolean canProcess = command.canProcess("find|user");
         //then
@@ -81,7 +81,7 @@ public class FindTest {
     @Test
     public void testCanProcessFindWithtParametersQweString() {
         //given
-        Command command = new Find(databaseManager, view);
+
         //when
         boolean canProcess = command.canProcess("qwe|user");
         //then
@@ -91,7 +91,6 @@ public class FindTest {
     @Test
     public void testPrintEmptyTableData() {
         //given
-        Command command = new Find(databaseManager, view);
 
         Mockito.when(databaseManager.getTableColumns("user"))
                 .thenReturn(new String[]{"id", "name", "password"});
