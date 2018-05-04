@@ -114,4 +114,33 @@ public class FindTest {
                         // "|12|Stiven|*****|, |13|Eva|+++++|, " +
                         "----------------------------]");
     }
+
+    @Test
+    public void testPrintTableDataWithOneColumn() {
+        //given
+        Mockito.when(databaseManager.getTableColumns("test"))
+                .thenReturn(new String[]{"id"});
+
+        DataSet user1 = new DataSet();
+        user1.put("id", 12);
+
+        DataSet user2 = new DataSet();
+        user2.put("id", 13);
+
+        DataSet[] data = new DataSet[]{user1, user2};
+        Mockito.when(databaseManager.getTableData("test"))
+                .thenReturn(data);
+
+
+        //when
+        command.process("find|test");
+
+        //then
+        shouldPrint("" +
+                "[----------------------------, " +
+                "|id|, ----------------------------, " +
+                "|12|, " +
+                "|13|, " +
+                "----------------------------]");
+    }
 }
